@@ -15,6 +15,7 @@ namespace SlpSharp
   internal delegate SlpBoolean SrvURLCallback( SlpHandle hSlp,
     string pcSrvUrl, UInt16 sLifetime, SlpError errCode, IntPtr pvCookie );
 
+  public delegate void ServerFoundCallback( string url, UInt16 lifetime );
 
   public class SlpClient : IDisposable
   {
@@ -50,6 +51,28 @@ namespace SlpSharp
     public Dictionary<string,UInt16> Find( string serviceType, string[] scopes )
     {
       var ret = new Dictionary<string,UInt16>();
+      Find ( serviceType, scopes,
+        delegate ( string url, UInt16 lifetime ) {
+          ret[url] = lifetime;
+        } );
+
+      return ret;
+    }
+
+    /// <summary>
+    /// Calls SlpFindSrvs and executes cb for every result found.
+    /// </summary>
+    /// <param name="serviceType">
+    /// A <see cref="System.String"/>
+    /// </param>
+    /// <param name="scopes">
+    /// A <see cref="System.String[]"/>
+    /// </param>
+    /// <param name="cb">
+    /// A <see cref="ServerFoundCallback"/>
+    /// </param>
+    public void Find( string serviceType, string[] scopes, ServerFoundCallback cb )
+    {
       String scopelist = null;
 
       if ( serviceType == null ) throw new ArgumentNullException("serviceType");
@@ -61,9 +84,8 @@ namespace SlpSharp
       var err = SlpNative.FindSrvs( hSlp, serviceType, scopelist, String.Empty,
         delegate ( SlpHandle h, string url, UInt16 lifetime, SlpError errcode, IntPtr cookie ) {
           if ( errcode == SlpError.OK ){
-            if ( url != null ){
-              var str = url;
-              ret.Add(str,lifetime);
+            if ( cb != null ){
+              cb( url, lifetime );
             }
           }
           if ( errcode == SlpError.LAST_CALL ) return SlpBoolean.False;
@@ -71,7 +93,6 @@ namespace SlpSharp
         }, IntPtr.Zero );
       if ( err != SlpError.OK ) throw new SlpException( err );
 
-      return ret;
     }
   }
 

@@ -11,10 +11,10 @@ namespace slpsharptest
       using ( var slp = new SlpClient( String.Empty ) ){
         Console.WriteLine("SLP Opened");
 
-        var found = slp.Find( "inbtest:inb.http", new string[0] );
-        foreach ( var f in found ){
-          Console.WriteLine("Found `{0}'", f );
-        }
+        slp.Find( "inbtest:inb.http", new string[0],
+          delegate ( string url, UInt16 lifetime ){
+            Console.WriteLine("found {0}, lifetime = {1}", url, lifetime );
+          } );
 
       }
       Console.WriteLine("SLP Closed");
