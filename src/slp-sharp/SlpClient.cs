@@ -23,7 +23,7 @@ namespace SlpSharp
 
     public SlpClient( string slpLang )
     {
-      SlpError err = SlpNative.Open( slpLang, SlpBoolean.False, ref hSlp );
+      SlpError err = SlpNativeMethods.Open( slpLang, SlpBoolean.False, ref hSlp );
       if ( err != SlpError.OK )
         throw new SlpException( err );
     }
@@ -32,7 +32,7 @@ namespace SlpSharp
     {
       if ( hSlp != IntPtr.Zero ){
         var tmp = hSlp; hSlp = IntPtr.Zero;
-        SlpNative.Close( tmp );
+        SlpNativeMethods.Close( tmp );
       }
     }
 
@@ -81,7 +81,7 @@ namespace SlpSharp
       if (scopes != null)
         scopelist = String.Join (",", scopes);
 
-      var err = SlpNative.FindSrvs( hSlp, serviceType, scopelist, String.Empty,
+      var err = SlpNativeMethods.FindSrvs( hSlp, serviceType, scopelist, String.Empty,
         delegate ( SlpHandle h, string url, UInt16 lifetime, SlpError errcode, IntPtr cookie ) {
           if ( errcode == SlpError.OK ){
             if ( cb != null ){

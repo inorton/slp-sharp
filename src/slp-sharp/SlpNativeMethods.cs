@@ -5,7 +5,7 @@ using SlpHandle = System.IntPtr;
 
 namespace SlpSharp.Native {
 
-  internal static class SlpNative {
+  internal static class SlpNativeMethods {
 
     [DllImport("slp", EntryPoint="SLPOpen" )]
     public static extern SlpError Open( string pcLang,
@@ -21,6 +21,14 @@ namespace SlpSharp.Native {
       string pcSearchFilter,
       SlpSharp.SrvURLCallback callback,
       IntPtr pvCookie );
+      
+    [DllImport("slp", EntryPoint="SLPFindAttrs" )]
+    public static extern SlpError FindAttrs( SlpHandle hSlp,
+      string pcURLOrServiceType, 
+      string pcScopeList,
+      string pcAttrIds, 
+      SlpSharp.AttrCallback callback, 
+      IntPtr pvCookie);
   }
 
 }
