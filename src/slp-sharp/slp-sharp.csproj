@@ -38,6 +38,7 @@
     <Compile Include="SlpException.cs" />
     <Compile Include="SlpNativeMethods.cs" />
     <Compile Include="SlpClient.cs" />
+    <Compile Include="SlpService.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

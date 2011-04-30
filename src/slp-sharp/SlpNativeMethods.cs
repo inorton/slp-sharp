@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using System.Runtime.InteropServices;
 
 using SlpHandle = System.IntPtr;
@@ -13,7 +14,23 @@ namespace SlpSharp.Native {
 
     [DllImport("slp", EntryPoint="SLPClose" )]
     public static extern void Close( SlpHandle hSlp );
-
+		
+	[DllImport("slp", EntryPoint="SLPReg" )]	
+	public static extern SlpError Reg( SlpHandle hSlp, 
+      string pcSrvURL,
+      UInt16 usLifetime, 
+      string pcSrvType,
+      string pcAttrs, 
+      SlpBoolean fresh, 
+      SlpSharp.RegReport   callback,
+      IntPtr pvCookie); 
+		
+	[DllImport("slp", EntryPoint="SLPDereg") ]	
+	public static extern SlpError DeReg( SlpHandle hSLP, 
+      string pcSrvURL,
+      RegReport callback, 
+      IntPtr pvCookie);	
+		
     [DllImport("slp", EntryPoint="SLPFindSrvs" )]
     public static extern SlpError FindSrvs( SlpHandle hSlp,
       string pcServiceType,
@@ -28,7 +45,8 @@ namespace SlpSharp.Native {
       string pcScopeList,
       string pcAttrIds, 
       SlpSharp.AttrCallback callback, 
-      IntPtr pvCookie);
+      IntPtr pvCookie); 
+        
   }
 
 }
