@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ItemType>PackagingProject</ItemType>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{89B4245D-B708-4BFB-9561-7B726DA5F129}</ProjectGuid>
+    <Packages>
+      <Packages>
+        <Package name="Mono Makefile Sources">
+          <Builder targetFile="..\slp-sharp-0.1.tar.gz" format="MonoDevelop.Projects.FileFormat" ctype="SourcesZipPackageBuilder">
+            <ChildEntries>
+              <SolutionItemReference path="..\slp-sharp-test\slp-sharp-test.csproj" />
+              <SolutionItemReference path="..\src\slp-sharp\slp-sharp.csproj" />
+            </ChildEntries>
+            <RootEntry path="..\slp-sharp.sln" id=":root:" />
+          </Builder>
+        </Package>
+      </Packages>
+    </Packages>
+  </PropertyGroup>
+</Project>

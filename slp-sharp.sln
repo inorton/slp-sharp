@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "slp-sharp-test", "slp-sharp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "slp-sharp", "src\slp-sharp\slp-sharp.csproj", "{18CDA50E-1479-40F0-AD63-649D9C1BE558}"
 EndProject
+Project("{9344bdbb-3e7f-41fc-a0dd-8665d75ee146}") = "pkg", "pkg\pkg.mdproj", "{89B4245D-B708-4BFB-9561-7B726DA5F129}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,8 @@ Global
 		{18CDA50E-1479-40F0-AD63-649D9C1BE558}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{18CDA50E-1479-40F0-AD63-649D9C1BE558}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{18CDA50E-1479-40F0-AD63-649D9C1BE558}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89B4245D-B708-4BFB-9561-7B726DA5F129}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89B4245D-B708-4BFB-9561-7B726DA5F129}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E9B44AAE-4581-452B-9BB3-A1D1B1066C3F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E9B44AAE-4581-452B-9BB3-A1D1B1066C3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E9B44AAE-4581-452B-9BB3-A1D1B1066C3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
