@@ -44,9 +44,11 @@ adverse results (your own mileage may vary).
 
 Linux x86 OpenSLP 1.x ( ubuntu 10.10 package )
 Linux x86 OpenSLP 2.0 Beta 1 ( compiled from source )
+Linux x86 OpenSLP 2.0 Beta 2 ( compiled from source )
 Linux x64 OpenSLP 1.x ( debian squeeze package )
 Linux x64 OpenSLP 2.0 Beta 1 ( compiled from source )
 Windows XP x86 OpenSLP 2.0 Beta 1 ( compiled from source )
+Windows XP x86 OpenSLP 2.0 Beta 2 ( compiled from source )
 
 I have experienced crashes when using the pre-built slp.dll from the
 openslp_2.0.0_beta1_x86.msi package from openslp.org but have had no problems
