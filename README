@@ -4,7 +4,7 @@ About
 ------
 
 slp-sharp is a simple wrapper around the client side service discovery parts 
-of OpenSLP (http://openslp.org).
+of OpenSLP (http://openslp.org). 
 
 Using slp-sharp you can currently search for advertised services of a particular
 service type and also supply scopes.
@@ -35,6 +35,22 @@ namespace slpsharptest
     }
   }
 }
+
+Supported OpenSLP Platforms
+----------------------------
+
+So far I have tested the following configurations with slp-sharp with no 
+adverse results (your own mileage may vary).
+
+Linux x86 OpenSLP 1.x ( ubuntu 10.10 package )
+Linux x86 OpenSLP 2.0 Beta 1 ( compiled from source )
+Linux x64 OpenSLP 1.x ( debian squeeze package )
+Linux x64 OpenSLP 2.0 Beta 1 ( compiled from source )
+Windows XP x86 OpenSLP 2.0 Beta 1 ( compiled from source )
+
+I have experienced crashes when using the pre-built slp.dll from the
+openslp_2.0.0_beta1_x86.msi package from openslp.org but have had no problems
+after building from sources.
 
 BSD License
 ------------
