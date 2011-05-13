@@ -15,6 +15,8 @@ namespace SlpSharp
   internal delegate SlpBoolean SrvURLCallback (SlpHandle hSlp,
     string pcSrvUrl, UInt16 sLifetime, SlpError errCode, IntPtr pvCookie);
 
+  public delegate void ServerTypeFoundCallback( string type );
+
   public delegate void ServerFoundCallback (string url, UInt16 lifetime);
   
   public delegate void AttribFoundCallback (string attributeList );  
@@ -37,6 +39,36 @@ namespace SlpSharp
         hSlp = IntPtr.Zero;
         SlpNativeMethods.Close (tmp);
       }
+    }
+
+    public List<string> FindTypes( string namingAuthority, string[] scopes )
+    {
+      var ret = new List<string>();
+      FindTypes( namingAuthority, scopes,
+        delegate ( string stype ){
+          ret.Add( stype );
+        });
+      return ret;
+    }
+
+    public void FindTypes( string namingAuthority, string[] scopes, ServerTypeFoundCallback cb )
+    {
+      String scopelist = null;
+      if (scopes != null)
+        scopelist = String.Join (",", scopes);
+
+      var err = SlpNativeMethods.FindSrvTypes( hSlp, namingAuthority, scopelist,
+        delegate ( SlpHandle h, string serviceType, SlpError errcode, IntPtr cookie ) {
+          if ( errcode == SlpError.OK ){
+            foreach ( var st in serviceType.Split(',') )
+              if ( cb != null )
+                cb( st );
+          }
+          if ( errcode == SlpError.LAST_CALL ) return SlpBoolean.False;
+          return SlpBoolean.True;
+        }, IntPtr.Zero );
+      if ( err != SlpError.OK )
+        throw new SlpException( err );
     }
 
     /// <summary>
