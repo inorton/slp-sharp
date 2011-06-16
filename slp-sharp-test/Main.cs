@@ -36,11 +36,13 @@ namespace slpsharptest
           Console.WriteLine ("found {0}, lifetime = {1}", url, lifetime);
           
           // now find the attribs for this service
+          using (var sslp = new SlpClient(String.Empty)) {
+            Console.WriteLine("searching for all attribs");
+            sslp.Attributes(url, null, null, delegate(string found) { Console.WriteLine(" -> {0}", found); return true; });
+          }
           using (var sslp = new SlpClient (String.Empty)) {
-            Console.WriteLine ("searching for all attribs");
-            sslp.Attributes (url, null, null, delegate(string found) { Console.WriteLine (" -> {0}", found); });
             Console.WriteLine ("searching for test attrib");
-            sslp.Attributes (url, null, new string[] { "test" }, delegate(string found) { Console.WriteLine (" -> {0}", found); });
+            sslp.Attributes(url, null, new string[] { "test" }, delegate(string found) { Console.WriteLine(" -> {0}", found); return true; });
           }
           
         });

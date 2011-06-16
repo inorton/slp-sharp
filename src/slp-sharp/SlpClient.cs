@@ -19,15 +19,19 @@ namespace SlpSharp
 
   public delegate void ServerFoundCallback (string url, UInt16 lifetime);
   
-  public delegate void AttribFoundCallback (string attributeList );  
+  public delegate bool AttribFoundCallback (string attributeList );  
 
   public class SlpClient : IDisposable
   {
     private SlpHandle hSlp = IntPtr.Zero;
-
+    
     public SlpClient (string slpLang)
     {
-      SlpError err = SlpNativeMethods.Open (slpLang, SlpBoolean.False, ref hSlp);
+      // try async mode first
+      SlpError err = SlpNativeMethods.Open (slpLang, SlpBoolean.True, ref hSlp);
+      if (err == SlpError.NOT_IMPLEMENTED )
+          err = SlpNativeMethods.Open(slpLang, SlpBoolean.False, ref hSlp);
+
       if (err != SlpError.OK)
         throw new SlpException ( err );
     }
@@ -56,13 +60,17 @@ namespace SlpSharp
       String scopelist = null;
       if (scopes != null)
         scopelist = String.Join (",", scopes);
+      var collatedTypes = new HashSet<string>();
 
       var err = SlpNativeMethods.FindSrvTypes( hSlp, namingAuthority, scopelist,
         delegate ( SlpHandle h, string serviceType, SlpError errcode, IntPtr cookie ) {
           if ( errcode == SlpError.OK ){
-            foreach ( var st in serviceType.Split(',') )
-              if ( cb != null )
-                cb( st );
+            foreach ( var st in serviceType.Split(',') ){
+              if ( !collatedTypes.Contains( st ) ){
+                collatedTypes.Add( st );
+                if ( cb != null ) cb( st );
+              }
+            }
           }
           if ( errcode == SlpError.LAST_CALL ) return SlpBoolean.False;
           return SlpBoolean.True;
@@ -108,8 +116,8 @@ namespace SlpSharp
     /// </param>
     public void Find (string serviceType, string[] scopes, ServerFoundCallback cb)
     {
-      String scopelist = null;
-
+      var scopelist = String.Empty;
+      var collatedServices = new HashSet<string>();
       if (serviceType == null)
         throw new ArgumentNullException ("serviceType");
       if (serviceType.Equals (string.Empty))
@@ -120,9 +128,10 @@ namespace SlpSharp
 
       var err = SlpNativeMethods.FindSrvs (hSlp, serviceType, scopelist, String.Empty, 
         delegate ( SlpHandle h, string url, UInt16 lifetime, SlpError errcode, IntPtr cookie ) {
-          if (errcode == SlpError.OK){
-            if (cb != null){
-              cb (url, lifetime);
+          if ( errcode == SlpError.OK ){
+            if ( !collatedServices.Contains(url) ){
+              collatedServices.Add(url);
+              if (cb != null) cb(url, lifetime);
             }
           }
           if (errcode == SlpError.LAST_CALL) return SlpBoolean.False;
@@ -149,11 +158,11 @@ namespace SlpSharp
         
       var err = SlpNativeMethods.FindAttrs( hSlp, serviceTypeOrUrl, scopelist, wantlist, 
         delegate (SlpHandle h, string al, SlpError errCode, IntPtr pvCookie) {
+          var ret = SlpBoolean.False;
           if ( errCode == SlpError.OK ) {
-            if ( cb != null ) cb ( al ); 
+              if ((cb != null) && cb(al)) ret = SlpBoolean.True; 
           }
-          if ( errCode == SlpError.LAST_CALL ) return SlpBoolean.False;
-          return SlpBoolean.True;
+          return ret;
         }, IntPtr.Zero );  
       if (err != SlpError.OK)
         throw new SlpException ( err );   
