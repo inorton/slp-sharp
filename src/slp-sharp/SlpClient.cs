@@ -17,10 +17,12 @@ namespace SlpSharp
 
   public delegate void ServerTypeFoundCallback( string type );
 
+  [CLSCompliant(false)]
   public delegate void ServerFoundCallback (string url, UInt16 lifetime);
   
   public delegate bool AttribFoundCallback (string attributeList );  
 
+  [CLSCompliant(false)]
   public class SlpClient : IDisposable
   {
     private SlpHandle hSlp = IntPtr.Zero;
