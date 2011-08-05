@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using SlpSharp.Native;
 
 using SlpHandle = System.IntPtr;
@@ -26,13 +27,19 @@ namespace SlpSharp
   public class SlpClient : IDisposable
   {
     private SlpHandle hSlp = IntPtr.Zero;
+    private AutoResetEvent wait = null;
+    public bool IsAsync { get; set; }
     
     public SlpClient (string slpLang)
     {
       // try async mode first
       SlpError err = SlpNativeMethods.Open (slpLang, SlpBoolean.True, ref hSlp);
-      if (err == SlpError.NOT_IMPLEMENTED )
+      IsAsync = true;
+      if (err == SlpError.NOT_IMPLEMENTED)
+      {
           err = SlpNativeMethods.Open(slpLang, SlpBoolean.False, ref hSlp);
+          IsAsync = false;
+      }
 
       if (err != SlpError.OK)
         throw new SlpException ( err );
@@ -62,6 +69,11 @@ namespace SlpSharp
       String scopelist = null;
       if (scopes != null)
         scopelist = String.Join (",", scopes);
+
+      if (wait != null) throw new SlpException(SlpError.HANDLE_IN_USE);
+          
+      wait = new AutoResetEvent(false);
+
       var collatedTypes = new HashSet<string>();
 
       var err = SlpNativeMethods.FindSrvTypes( hSlp, namingAuthority, scopelist,
@@ -74,11 +86,17 @@ namespace SlpSharp
               }
             }
           }
-          if ( errcode == SlpError.LAST_CALL ) return SlpBoolean.False;
+          if (errcode == SlpError.LAST_CALL) {
+              wait.Set();
+              return SlpBoolean.False; 
+          }
           return SlpBoolean.True;
         }, IntPtr.Zero );
       if ( err != SlpError.OK )
         throw new SlpException( err );
+
+      wait.WaitOne();
+      wait = null;
     }
 
     /// <summary>
@@ -128,6 +146,9 @@ namespace SlpSharp
       if (scopes != null)
         scopelist = String.Join (",", scopes);
 
+      if (wait != null) throw new SlpException(SlpError.HANDLE_IN_USE);
+      wait = new AutoResetEvent(false);
+
       var err = SlpNativeMethods.FindSrvs (hSlp, serviceType, scopelist, String.Empty, 
         delegate ( SlpHandle h, string url, UInt16 lifetime, SlpError errcode, IntPtr cookie ) {
           if ( errcode == SlpError.OK ){
@@ -136,11 +157,18 @@ namespace SlpSharp
               if (cb != null) cb(url, lifetime);
             }
           }
-          if (errcode == SlpError.LAST_CALL) return SlpBoolean.False;
+          if (errcode == SlpError.LAST_CALL)
+          {
+              wait.Set();
+              return SlpBoolean.False;
+          }
           return SlpBoolean.True;
         }, IntPtr.Zero);
       if (err != SlpError.OK)
         throw new SlpException ( err );
+
+      wait.WaitOne();
+      wait = null;
 
     }
         

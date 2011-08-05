@@ -48,7 +48,22 @@ namespace slpsharptest
         });
       }
       Console.WriteLine ("SLP Closed");
-      
+
+
+      Console.WriteLine("Test Sync Mode");
+      using (var slp = new SlpClient(String.Empty)) {
+          Console.WriteLine("SLP Opened");
+          Console.WriteLine("Start Call Sync Find");
+          var found = slp.Find("testservice.tcp", new string[0]);
+          Console.WriteLine("Returned Call Sync Find");
+          foreach (var f in found.Keys)
+          {
+              Console.WriteLine("Found {0}",f);
+          }
+      }
+      Console.WriteLine("SLP Closed");
+
+      System.Threading.Thread.Sleep(5000);
     }
   }
 }
